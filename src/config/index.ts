@@ -33,9 +33,11 @@ export const config = {
     sameSite: (process.env.COOKIE_SAME_SITE as 'strict' | 'lax' | 'none') || 'lax',
   },
 
-  // CORS - strip trailing slash to prevent CORS mismatch
+  // CORS - supports multiple origins separated by comma
   cors: {
-    origin: (process.env.CORS_ORIGIN || 'http://localhost:3000').replace(/\/+$/, ''),
+    origin: process.env.CORS_ORIGIN
+      ? process.env.CORS_ORIGIN.split(',').map((o) => o.trim().replace(/\/+$/, ''))
+      : ['http://localhost:3000'],
     credentials: true,
   },
 
