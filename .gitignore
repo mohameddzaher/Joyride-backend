@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.env
+uploads/
+.DS_Store
+*.tsbuildinfo
+packages/shared/dist/
+packages/shared/node_modules/

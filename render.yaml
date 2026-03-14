@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: joyride-backend
+    runtime: node
+    buildCommand: npm install --production=false && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
