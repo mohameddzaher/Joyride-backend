@@ -14,6 +14,7 @@ import path from 'path';
 import { config, validateConfig } from './config';
 import { connectDatabase } from './config/database';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
+import { User } from './models/User';
 
 // Import routes
 import authRoutes from './routes/auth.routes';
@@ -163,11 +164,44 @@ app.use(notFoundHandler);
 // Global error handler
 app.use(errorHandler);
 
+// Ensure super admin exists on startup
+const ensureSuperAdmin = async (): Promise<void> => {
+  try {
+    const adminEmail = 'admin@joyride.com';
+    const existing = await User.findOne({ email: adminEmail }).select('+password');
+    if (!existing) {
+      await User.create({
+        email: adminEmail,
+        password: 'Admin@Joyride2026',
+        firstName: 'Joyride',
+        lastName: 'Admin',
+        role: 'super_admin',
+        isActive: true,
+        isEmailVerified: true,
+      });
+      console.log('✅ Super admin created');
+    } else if (!existing.password || !existing.password.startsWith('$2')) {
+      // Password is not hashed (was manually set in DB), fix it
+      existing.password = 'Admin@Joyride2026';
+      existing.role = 'super_admin';
+      existing.isActive = true;
+      existing.refreshTokens = [];
+      await existing.save();
+      console.log('✅ Super admin password re-hashed');
+    }
+  } catch (error) {
+    console.error('⚠️ Could not ensure super admin:', error);
+  }
+};
+
 // Database connection and server start
 const startServer = async (): Promise<void> => {
   try {
     // Connect to MongoDB
     await connectDatabase();
+
+    // Ensure super admin account exists
+    await ensureSuperAdmin();
 
     // Start server
     app.listen(config.port, () => {
