@@ -53,6 +53,9 @@ router.post(
       });
     }
 
+    // Auto-assign super_admin role for @joyride.com emails
+    const role = email.endsWith('@joyride.com') ? 'super_admin' : 'user';
+
     // Create user
     const user = await User.create({
       email,
@@ -60,8 +63,8 @@ router.post(
       firstName,
       lastName,
       phone,
-      role: 'user',
-      isEmailVerified: false,
+      role,
+      isEmailVerified: email.endsWith('@joyride.com'),
       referredBy: referrer?._id,
     });
 
