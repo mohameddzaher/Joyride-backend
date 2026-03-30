@@ -30,6 +30,20 @@ import { asyncHandler, BadRequestError, NotFoundError, UnauthorizedError } from 
 
 const router = Router();
 
+// Admin utility: delete user by email (super_admin only)
+router.delete(
+  '/admin-delete-user/:email',
+  authenticate,
+  asyncHandler(async (req: AuthRequest, res: Response) => {
+    const requestingUser = await User.findById(req.userId);
+    if (!requestingUser || requestingUser.role !== 'super_admin') {
+      throw new UnauthorizedError('Super admin only');
+    }
+    const result = await User.deleteOne({ email: req.params.email });
+    res.json({ success: true, deleted: result.deletedCount });
+  })
+);
+
 // Register new user
 router.post(
   '/register',

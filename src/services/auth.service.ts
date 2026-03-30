@@ -162,11 +162,14 @@ export const validatePasswordStrength = (password: string): { valid: boolean; me
 };
 
 // Get cookie options for refresh token
-export const getRefreshTokenCookieOptions = () => ({
-  httpOnly: true,
-  secure: config.cookie.secure,
-  sameSite: config.cookie.sameSite as 'strict' | 'lax' | 'none',
-  domain: config.cookie.domain,
-  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-  path: '/api/v1/auth',
-});
+export const getRefreshTokenCookieOptions = () => {
+  // Detect production by checking if running on render.com or COOKIE_SECURE is set
+  const isHttps = config.cookie.secure || !!process.env.RENDER;
+  return {
+    httpOnly: true,
+    secure: isHttps,
+    sameSite: (isHttps ? 'none' : 'lax') as 'strict' | 'lax' | 'none',
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    path: '/api/v1/auth',
+  };
+};
