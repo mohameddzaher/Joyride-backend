@@ -111,7 +111,7 @@ const productSchema = new Schema<IProduct>(
     },
     brand: {
       type: String,
-      required: true,
+      required: false,
       trim: true,
       index: true,
     },

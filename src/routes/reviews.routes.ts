@@ -112,14 +112,14 @@ router.get(
   asyncHandler(async (req: AuthRequest, res: Response) => {
     const { productId } = req.params;
 
-    // Check if user has a delivered order with this product
-    const order = await Order.findOne({
+    // Find all delivered orders with this product
+    const orders = await Order.find({
       userId: req.userId,
       status: 'delivered',
       'items.productId': productId,
-    });
+    }).select('_id');
 
-    if (!order) {
+    if (!orders.length) {
       res.json({
         success: true,
         data: { canReview: false, reason: 'No delivered order found' },
@@ -127,14 +127,17 @@ router.get(
       return;
     }
 
-    // Check if user already reviewed this product for this order
-    const existingReview = await Review.findOne({
+    // Find which orders already have reviews
+    const existingReviews = await Review.find({
       userId: req.userId,
       productId,
-      orderId: order._id,
-    });
+      orderId: { $in: orders.map(o => o._id) },
+    }).select('orderId');
 
-    if (existingReview) {
+    const reviewedOrderIds = new Set(existingReviews.map(r => r.orderId.toString()));
+    const availableOrder = orders.find(o => !reviewedOrderIds.has(o._id.toString()));
+
+    if (!availableOrder) {
       res.json({
         success: true,
         data: { canReview: false, reason: 'Already reviewed' },
@@ -144,7 +147,7 @@ router.get(
 
     res.json({
       success: true,
-      data: { canReview: true, orderId: order._id },
+      data: { canReview: true, orderId: availableOrder._id },
     });
   })
 );

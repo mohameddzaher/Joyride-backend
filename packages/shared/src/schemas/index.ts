@@ -122,7 +122,7 @@ export const productFAQSchema = z.object({
 
 export const createProductSchema = z.object({
   title: z.string().min(3).max(200),
-  brand: z.string().min(1).max(100),
+  brand: z.string().max(100).optional(),
   sku: z.string().min(1).max(50),
   description: z.string().min(10).max(10000),
   shortDescription: z.string().max(500).optional(),
