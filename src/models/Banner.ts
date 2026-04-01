@@ -5,6 +5,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 export type BannerPosition =
+  | 'top_banner'
   | 'hero_main'
   | 'hero_secondary'
   | 'home_middle'
@@ -49,7 +50,7 @@ const bannerSchema = new Schema<IBanner>(
     linkText: String,
     position: {
       type: String,
-      enum: ['hero_main', 'hero_secondary', 'home_middle', 'home_bottom', 'category_top', 'product_sidebar'],
+      enum: ['top_banner', 'hero_main', 'hero_secondary', 'home_middle', 'home_bottom', 'category_top', 'product_sidebar'],
       required: true,
       index: true,
     },

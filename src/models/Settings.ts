@@ -277,19 +277,19 @@ const settingsSchema = new Schema<ISettings>(
     },
     socialInstagram: {
       type: String,
-      default: 'https://www.instagram.com/energize.tech.s',
+      default: '',
     },
     socialTwitter: {
       type: String,
-      default: 'https://x.com/e_tech_s',
+      default: '',
     },
     socialYoutube: {
       type: String,
-      default: 'https://www.youtube.com/@E_TECH_S',
+      default: '',
     },
     socialTiktok: {
       type: String,
-      default: 'https://www.tiktok.com/@e.tech.s',
+      default: '',
     },
     socialLinkedin: {
       type: String,
@@ -297,7 +297,7 @@ const settingsSchema = new Schema<ISettings>(
     },
     socialWhatsapp: {
       type: String,
-      default: 'https://wa.me/966538486109',
+      default: '',
     },
     // Appearance
     logo: {
@@ -469,21 +469,7 @@ settingsSchema.statics.getSettings = async function () {
   if (!settings) {
     settings = await this.create({});
   } else {
-    // Backfill social media defaults for existing records that have empty values
-    const socialDefaults: Record<string, string> = {
-      socialInstagram: 'https://www.instagram.com/energize.tech.s',
-      socialTwitter: 'https://x.com/e_tech_s',
-      socialYoutube: 'https://www.youtube.com/@E_TECH_S',
-      socialTiktok: 'https://www.tiktok.com/@e.tech.s',
-      socialWhatsapp: 'https://wa.me/966538486109',
-    };
     let needsSave = false;
-    for (const [key, value] of Object.entries(socialDefaults)) {
-      if (!settings[key]) {
-        (settings as any)[key] = value;
-        needsSave = true;
-      }
-    }
 
     // Backfill theme color defaults for existing records with old values
     const colorDefaults: Record<string, { old: string; new: string }> = {
