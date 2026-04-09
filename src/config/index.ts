@@ -33,11 +33,17 @@ export const config = {
     sameSite: (process.env.COOKIE_SAME_SITE as 'strict' | 'lax' | 'none') || 'lax',
   },
 
-  // CORS - supports multiple origins separated by comma
+  // CORS - supports multiple origins separated by comma, always includes localhost for dev
   cors: {
-    origin: process.env.CORS_ORIGIN
-      ? process.env.CORS_ORIGIN.split(',').map((o) => o.trim().replace(/\/+$/, ''))
-      : ['http://localhost:3000'],
+    origin: (() => {
+      const origins = process.env.CORS_ORIGIN
+        ? process.env.CORS_ORIGIN.split(',').map((o) => o.trim().replace(/\/+$/, ''))
+        : [];
+      // Always allow localhost for development
+      if (!origins.includes('http://localhost:3000')) origins.push('http://localhost:3000');
+      if (!origins.includes('http://localhost:3001')) origins.push('http://localhost:3001');
+      return origins;
+    })(),
     credentials: true,
   },
 
