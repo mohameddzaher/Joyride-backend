@@ -26,9 +26,9 @@ export const config = {
     refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
   },
 
-  // Cookies
+  // Cookies (domain is intentionally omitted — the browser defaults to the
+  // exact origin that set the cookie, which is required for cross-origin use)
   cookie: {
-    domain: process.env.COOKIE_DOMAIN || 'localhost',
     secure: process.env.COOKIE_SECURE === 'true',
     sameSite: (process.env.COOKIE_SAME_SITE as 'strict' | 'lax' | 'none') || 'lax',
   },

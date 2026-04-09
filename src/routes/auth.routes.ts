@@ -202,7 +202,7 @@ router.post(
     const result = await refreshAccessToken(refreshToken);
 
     if (!result) {
-      res.clearCookie('refreshToken');
+      res.clearCookie('refreshToken', getRefreshTokenCookieOptions());
       throw new UnauthorizedError('Invalid refresh token');
     }
 
@@ -241,7 +241,7 @@ router.post(
       );
     }
 
-    res.clearCookie('refreshToken');
+    res.clearCookie('refreshToken', getRefreshTokenCookieOptions());
 
     res.json({
       success: true,

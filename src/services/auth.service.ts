@@ -163,13 +163,16 @@ export const validatePasswordStrength = (password: string): { valid: boolean; me
 
 // Get cookie options for refresh token
 export const getRefreshTokenCookieOptions = () => {
-  // Detect production by checking if running on render.com or COOKIE_SECURE is set
-  const isHttps = config.cookie.secure || !!process.env.RENDER;
+  // Detect production/HTTPS: check NODE_ENV, RENDER env, or explicit COOKIE_SECURE
+  const isProduction = config.isProd || !!process.env.RENDER || config.cookie.secure;
   return {
     httpOnly: true,
-    secure: isHttps,
-    sameSite: (isHttps ? 'none' : 'lax') as 'strict' | 'lax' | 'none',
+    secure: isProduction,
+    sameSite: (isProduction ? 'none' : 'lax') as 'strict' | 'lax' | 'none',
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    path: '/api/v1/auth',
+    path: '/',
+    // NOTE: Do NOT set 'domain' — omitting it lets the browser default to the
+    // exact origin that set the cookie, which is required for cross-origin
+    // (frontend ≠ backend domain) cookie delivery with sameSite: 'none'.
   };
 };
