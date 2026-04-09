@@ -16,11 +16,17 @@ export type BannerPosition =
 export interface IBanner extends Document {
   _id: mongoose.Types.ObjectId;
   title: string;
+  titleAr?: string;
+  titleEn?: string;
   subtitle?: string;
+  subtitleAr?: string;
+  subtitleEn?: string;
   image: string;
   mobileImage?: string;
   link?: string;
   linkText?: string;
+  linkTextAr?: string;
+  linkTextEn?: string;
   position: BannerPosition;
   backgroundColor?: string;
   textColor?: string;
@@ -40,7 +46,11 @@ const bannerSchema = new Schema<IBanner>(
       required: true,
       trim: true,
     },
+    titleAr: String,
+    titleEn: String,
     subtitle: String,
+    subtitleAr: String,
+    subtitleEn: String,
     image: {
       type: String,
       required: true,
@@ -48,6 +58,8 @@ const bannerSchema = new Schema<IBanner>(
     mobileImage: String,
     link: String,
     linkText: String,
+    linkTextAr: String,
+    linkTextEn: String,
     position: {
       type: String,
       enum: ['top_banner', 'hero_main', 'hero_secondary', 'home_middle', 'home_bottom', 'category_top', 'product_sidebar'],
